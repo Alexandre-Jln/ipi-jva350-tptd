@@ -51,7 +51,9 @@ public final class Entreprise {
                 // 8 mai Fête de la Victoire
                 LocalDate.of(now.getYear(), 5,8),
                 // Jeudi 40 jours après Pâques Ascension Fête chrétienne célébrant la montée de Jésus aux cieux.
-                datePaque.get(now.getYear()).plusDays(40L),
+                // Correction : l'Ascension est le 39ème jour après Pâques (jeudi), pas le 40ème
+                // plusDays(40) donnait le vendredi au lieu du jeudi de l'Ascension
+                datePaque.get(now.getYear()).plusDays(39L),
                 // Le lundi suivant le dimanche de Pentecôte (le septième après Pâques).
                 datePaque.get(now.getYear()).plusDays(50L),
                 // 14 juillet Fête nationale
