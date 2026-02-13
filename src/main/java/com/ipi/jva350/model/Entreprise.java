@@ -132,14 +132,11 @@ public final class Entreprise {
                 : LocalDate.of(d.getYear() - 1, 6, 1);
     }
 
+    // Correction : la logique originale utilisait bissextile pour un calcu l qui n'a
+    // aucun rapport avec les années bissextiles. La méthode doit simplement vérifier
+    // si le jour donnée fait partis de la liste des jours fériés.
     public static boolean estJourFerie(LocalDate jour) {
-        int monEntier = (int) Entreprise.joursFeries(jour).stream().filter(d ->
-                d.equals(jour)).count();
-        int test = bissextile(jour.getYear()) ? 1 : 0;
-        if (test != 0 && !(monEntier > 1)) {
-            test--;
-        }
-        return monEntier != test;
+        return joursFeries(jour).contains(jour);
     }
 
     public static boolean estDansPlage(LocalDate d, LocalDate debut, LocalDate fin) {
