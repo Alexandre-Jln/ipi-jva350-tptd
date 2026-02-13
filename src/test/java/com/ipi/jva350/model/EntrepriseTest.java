@@ -156,4 +156,53 @@ public class EntrepriseTest {
         // THEN
         assertThat(resultat).isFalse();
     }
+
+    // Test de la méthode estJourFerie avec test de plusieurs dates de l'année 2023 et 2024
+    @ParameterizedTest(name = "{4} ({0}-{1}-{2}) => estFerie={3}")
+    @CsvSource({
+            // Jours fériés fixe 2024 (bissextile)
+            "2024, 1, 1,   true,  Jour de l'An 2024",
+            "2024, 5, 1,   true,  Fête du Travail 2024",
+            "2024, 5, 8,   true,  Victoire 1945 2024",
+            "2024, 7, 14,  true,  Fête Nationale 2024",
+            "2024, 8, 15,  true,  Assomption 2024",
+            "2024, 11, 1,  true,  Toussaint 2024",
+            "2024, 11, 11, true,  Armistice 2024",
+            "2024, 12, 25, true,  Noël 2024",
+
+            // Jours férié mobiles 2024 (Pâques = 31 mars 2024)
+            "2024, 4, 1,   true,  Lundi de Pâques 2024",
+            "2024, 5, 9,   true,  Ascension 2024",
+            "2024, 5, 20,  true,  Lundi de Pentecôte 2024",
+
+            // Jours non fériés 2024
+            "2024, 3, 15,  false, Jour ouvrable 2024",
+            "2024, 7, 15,  false, Lendemain fête nationale",
+            "2024, 12, 24, false, Veille de Noël",
+            "2024, 2, 29,  false, 29 février (bissextile)",
+            "2024, 12, 31, false, Saint-Sylvestre",
+
+            // Jours fériés fixes 2023 (non bissextile)
+            "2023, 1, 1,   true,  Jour de l'An 2023",
+            "2023, 5, 1,   true,  Fête du Travail 2023",
+            "2023, 12, 25, true,  Noël 2023",
+
+            // Jours fériés mobiles 2023 (Pâques = 9 avril 2023)
+            "2023, 4, 10,  true,  Lundi de Pâques 2023",
+            "2023, 5, 18,  true,  Ascension 2023",
+            "2023, 5, 29,  true,  Lundi de Pentecôte 2023",
+
+            // Jours non fériés 2023
+            "2023, 6, 15,  false, Jour ouvrable 2023",
+            "2023, 4, 9,   false, Dimanche de Pâques 2023 (pas férié)"
+    })
+
+    void estJourFerieTest(int annee, int mois, int jour, boolean attendu, String description) {
+        // Given
+        LocalDate date = LocalDate.of(annee, mois, jour);
+        // When
+        boolean resultat = Entreprise.estJourFerie(date);
+        // Then
+        assertThat(resultat).isEqualTo(attendu);
+    }
 }
