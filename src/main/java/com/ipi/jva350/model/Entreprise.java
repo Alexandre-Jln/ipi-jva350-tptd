@@ -110,10 +110,18 @@ public final class Entreprise {
     }
 
 
+    // Correction : l'ancienne version utilisait d.getMonthValue() au lieu de d.getYear()
+    // dans le premier LocalDate.of(), ce qui créait une date avec l'année = numéro du mois
+    // (ex: mois 11 → année 0011). Du coup le ternaire imbriqué a été extrait en if/else
+    // pour améliorer la lisibilité (recommandation Sonar doc).
     public static LocalDate getPremierJourAnneeDeConges(LocalDate d) {
-        return d == null ? null
-                : d.getMonthValue() > 5 ? LocalDate.of(d.getMonthValue(), 6, 1)
-                : LocalDate.of(d.getYear() - 1, 6, 1);
+        if (d == null) {
+            return null;
+        }
+        if (d.getMonthValue() > 5) {
+            return LocalDate.of(d.getYear(), 6, 1);
+        }
+        return LocalDate.of(d.getYear() - 1, 6, 1);
     }
 
     // Correction : la logique originale utilisait bissextile pour un calcu l qui n'a
