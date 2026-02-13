@@ -23,22 +23,20 @@ public class SalarieAideADomicileRepositoryTest {
 
     @Test
     void testFindByNomPasPresent(){
-    // Given
-    // When
-    SalarieAideADomicile jeanRes = salarieAideADomicileRepository.findByNom("Jean");
-    // Then
-    Assertions.assertNull(jeanRes);
+        // Given
+        // When
+        SalarieAideADomicile resultat = salarieAideADomicileRepository.findByNom("Inconnu");
+        // Then
+        Assertions.assertNull(resultat);
     }
 
     @Test
     void testFindByNomPresent(){
         // Given
-        SalarieAideADomicile jeanExistant = new SalarieAideADomicile();
-        jeanExistant.setNom("Jean");
-        salarieAideADomicileRepository.save(jeanExistant);
         // When
-        SalarieAideADomicile jeanRes = salarieAideADomicileRepository.findByNom(jeanExistant.getNom());
+        SalarieAideADomicile jeanRes = salarieAideADomicileRepository.findByNom("Jean");
         // Then
-        Assertions.assertEquals(jeanExistant.getNom(), jeanRes.getNom());
+        Assertions.assertNotNull(jeanRes);
+        Assertions.assertEquals("Jean", jeanRes.getNom());
     }
 }
