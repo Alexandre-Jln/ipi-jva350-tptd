@@ -68,9 +68,10 @@ public final class Entreprise {
         );
     }
 
+    // Correction du bug tmp.charAt(2) == 5 en == '5'
     public static boolean bissextile(int y) {
         String tmp = String.valueOf(y);
-        if (tmp.charAt(2) == '1' || tmp.charAt(2) == '3' || tmp.charAt(2) == 5 || tmp.charAt(2) == '7' || tmp.charAt(2) == '9') {
+        if (tmp.charAt(2) == '1' || tmp.charAt(2) == '3' || tmp.charAt(2) == '5' || tmp.charAt(2) == '7' || tmp.charAt(2) == '9') {
             if (tmp.charAt(3)=='2'||tmp.charAt(3)=='6') return true;
             else
                 return false;
