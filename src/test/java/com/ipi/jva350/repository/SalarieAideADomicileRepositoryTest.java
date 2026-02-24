@@ -67,14 +67,19 @@ public class SalarieAideADomicileRepositoryTest {
     @Test
     void testPartCongesPrisTotauxAnneeNMoins1_AucunConges() {
         // Given
-        // "Jean" du @BeforeEach a des congés à 0 par défaut
+        // Jean a des congés acquis mais n'en a pris aucun
+        SalarieAideADomicile jean = salarieAideADomicileRepository.findByNom("Jean");
+        jean.setCongesPayesPrisAnneeNMoins1(0);
+        jean.setCongesPayesAcquisAnneeNMoins1(20.0);
+        salarieAideADomicileRepository.save(jean);
 
         // When
+        // sum(pris) = 0, sum(acquis) = 20 => 0/20 = 0.0
         Double resultat = salarieAideADomicileRepository.partCongesPrisTotauxAnneeNMoins1();
 
         // Then
-        // 0 / 0 = null en SQL
-        Assertions.assertNull(resultat);
+        Assertions.assertNotNull(resultat);
+        Assertions.assertEquals(0.0, resultat, 0.001);
     }
 
     @Test
