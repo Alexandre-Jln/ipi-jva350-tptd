@@ -89,4 +89,32 @@ class SalarieAideADomicileServiceTest {
 
         assertEquals(attendu, limite);
     }
+
+    @Test
+    void integration_limiteEntreprise_declencheExceptionSiDepassement() {
+
+        // GIVEN
+        when(salarieAideADomicileRepository.partCongesPrisTotauxAnneeNMoins1())
+                .thenReturn(0.2);
+
+        SalarieAideADomicile salarie = new SalarieAideADomicile();
+        salarie.setNom("Dupont");
+        salarie.setMoisEnCours(LocalDate.of(2024, 4, 1));
+        salarie.setMoisDebutContrat(LocalDate.of(2020, 1, 1));
+        salarie.setJoursTravaillesAnneeNMoins1(20); // droit aux congés
+        salarie.setCongesPayesAcquisAnneeNMoins1(25);
+
+        LocalDate debut = LocalDate.of(2024, 5, 1);
+        LocalDate fin = LocalDate.of(2024, 5, 10);
+
+        // WHEN + THEN
+        SalarieException ex = assertThrows(
+                SalarieException.class,
+                () -> service.ajouteConge(salarie, debut, fin)
+        );
+
+        assertTrue(ex.getMessage().contains("dépassent la limite"));
+    }
+
+
 }
