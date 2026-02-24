@@ -2,7 +2,6 @@ package com.ipi.jva350.model;
 
 import com.ipi.jva350.repository.SalarieAideADomicileRepository;
 import com.ipi.jva350.service.SalarieAideADomicileService;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,9 +76,24 @@ public class SalarieAideADomicileTest {
 
     // mock test
     @Test
-    public void testAjouteConge() {
+    public void testAjouteConge_SansCongesPayes_LeveException() throws Exception {
         // Given
-        // When
-        // Then Exception
+        SalarieAideADomicile salarie = new SalarieAideADomicile();
+        salarie.setJoursTravaillesAnneeNMoins1(0);
+        salarie.setCongesPayesAcquisAnneeNMoins1(0);
+        salarie.setMoisEnCours(LocalDate.of(2025, 3, 1));
+        salarie.setCongesPayesPris(new LinkedHashSet<>());
+
+        Mockito.when(salarieAideADomicileRepository.partCongesPrisTotauxAnneeNMoins1())
+                .thenReturn(0.5);
+
+        // When / Then
+        Assertions.assertThrows(Exception.class, () -> {
+            salarieAideADomicileService.ajouteConge(
+                    salarie,
+                    LocalDate.of(2025, 3, 10),
+                    LocalDate.of(2025, 3, 14)
+            );
+        });
     }
 }
