@@ -9,7 +9,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
@@ -56,36 +55,33 @@ public class SalarieAideADomicileTest {
         // THEN
         Assertions.assertTrue(resultat);
     }
+
     @ParameterizedTest(name = "plage de congés {0}-{1} n'a pas le bon nombre de jours : {2}")
     @CsvSource({
             "'2026-08-01', '2026-08-21', 17",
             "'2025-12-22', '2026-01-05', 11",
             "'2025-11-11', '2025-11-11', 0",
     })
-
     public void testCalculeJoursDeCongeDecomptesPourPlage(String dateDebutString, String dateFinString, int nbJoursDeConges) {
-        // Given,
+        // Given
         SalarieAideADomicile monSalarie = new SalarieAideADomicile();
         LocalDate dateDebut = LocalDate.parse(dateDebutString);
         LocalDate dateFin = LocalDate.parse(dateFinString);
-        // When,
+        // When
         LinkedHashSet<LocalDate> res = monSalarie.calculeJoursDeCongeDecomptesPourPlage(dateDebut, dateFin);
         // Then
         Assertions.assertEquals(nbJoursDeConges, res.size());
     }
 
-    // mock test
+    // Mock test - vérifie qu'un salarié sans droit aux congés lève une exception
     @Test
-    public void testAjouteConge_SansCongesPayes_LeveException() throws Exception {
+    public void testAjouteConge_SansCongesPayes_LeveException() {
         // Given
         SalarieAideADomicile salarie = new SalarieAideADomicile();
         salarie.setJoursTravaillesAnneeNMoins1(0);
         salarie.setCongesPayesAcquisAnneeNMoins1(0);
         salarie.setMoisEnCours(LocalDate.of(2025, 3, 1));
         salarie.setCongesPayesPris(new LinkedHashSet<>());
-
-        Mockito.when(salarieAideADomicileRepository.partCongesPrisTotauxAnneeNMoins1())
-                .thenReturn(0.5);
 
         // When / Then
         Assertions.assertThrows(Exception.class, () -> {
