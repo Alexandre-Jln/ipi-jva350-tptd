@@ -4,14 +4,15 @@ import com.ipi.jva350.exception.SalarieException;
 import com.ipi.jva350.model.Entreprise;
 import com.ipi.jva350.model.SalarieAideADomicile;
 import com.ipi.jva350.repository.SalarieAideADomicileRepository;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -42,16 +43,20 @@ class SalarieAideADomicileServiceTest {
 
         // WHEN
         long limite = service.calculeLimiteEntrepriseCongesPermis(
-                moisEnCours, congesN1, debutContrat, debut, fin
+                moisEnCours,
+                congesN1,
+                debutContrat,
+                debut,
+                fin
         );
 
         // THEN
+        // CalcuL sur la proportion pondérée
         double proportion = Entreprise.proportionPondereeDuMois(debut);
         long attendu = Math.round(proportion * congesN1);
 
         assertEquals(attendu, limite);
     }
-
 
     @Test
     void calculeLimiteAvecBonusMalus() {
@@ -70,10 +75,15 @@ class SalarieAideADomicileServiceTest {
 
         // WHEN
         long limite = service.calculeLimiteEntrepriseCongesPermis(
-                moisEnCours, congesN1, debutContrat, debut, fin
+                moisEnCours,
+                congesN1,
+                debutContrat,
+                debut,
+                fin
         );
 
         // THEN
+        // Calcul de la limite attendue avec bonus/malus
         double proportion = Entreprise.proportionPondereeDuMois(debut);
         double base = proportion * congesN1;
 
@@ -97,6 +107,7 @@ class SalarieAideADomicileServiceTest {
         when(salarieAideADomicileRepository.partCongesPrisTotauxAnneeNMoins1())
                 .thenReturn(0.2);
 
+        // Création d’un salarié valide avec droits aux congés
         SalarieAideADomicile salarie = new SalarieAideADomicile();
         salarie.setNom("Dupont");
         salarie.setMoisEnCours(LocalDate.of(2024, 4, 1));
@@ -108,6 +119,7 @@ class SalarieAideADomicileServiceTest {
         LocalDate fin = LocalDate.of(2024, 5, 10);
 
         // WHEN + THEN
+        // On vérifie que l’exception est bien levée si la limite entreprise est dépassée
         SalarieException ex = assertThrows(
                 SalarieException.class,
                 () -> service.ajouteConge(salarie, debut, fin)
@@ -115,6 +127,4 @@ class SalarieAideADomicileServiceTest {
 
         assertTrue(ex.getMessage().contains("dépassent la limite"));
     }
-
-
 }
