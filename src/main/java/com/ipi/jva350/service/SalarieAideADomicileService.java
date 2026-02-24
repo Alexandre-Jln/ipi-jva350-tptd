@@ -20,9 +20,6 @@ public class SalarieAideADomicileService {
     @Autowired
     private SalarieAideADomicileRepository salarieAideADomicileRepository;
 
-    public SalarieAideADomicileService() {
-    }
-
     /**
      * Créée un nouveau salarié en base de données.
      * @param salarieAideADomicile à créer
