@@ -4,7 +4,6 @@ import com.ipi.jva350.exception.SalarieException;
 import com.ipi.jva350.model.Entreprise;
 import com.ipi.jva350.model.SalarieAideADomicile;
 import com.ipi.jva350.repository.SalarieAideADomicileRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityExistsException;
@@ -17,8 +16,12 @@ import java.util.stream.Collectors;
 @Service
 public class SalarieAideADomicileService {
 
-    @Autowired
-    private SalarieAideADomicileRepository salarieAideADomicileRepository;
+    private final SalarieAideADomicileRepository salarieAideADomicileRepository;
+
+    // Injection par constructeur au lieu de @Autowired sur champ (recommandation Sonar)
+    public SalarieAideADomicileService(SalarieAideADomicileRepository salarieAideADomicileRepository) {
+        this.salarieAideADomicileRepository = salarieAideADomicileRepository;
+    }
 
     /**
      * Créée un nouveau salarié en base de données.
@@ -34,7 +37,7 @@ public class SalarieAideADomicileService {
         if (salarieAideADomicile.getId() != null) {
             throw new SalarieException("L'id ne doit pas être fourni car il est généré");
         }
-       salarieAideADomicileRepository.save(salarieAideADomicile);
+        salarieAideADomicileRepository.save(salarieAideADomicile);
     }
 
     /**
@@ -50,14 +53,14 @@ public class SalarieAideADomicileService {
      * Utilisé par ajouteMois(). NB. ajouteMois() a déjà vérifié que le congé est dans l'année en cours.
      * @param moisEnCours du salarieAideADomicile
      * @param congesPayesAcquisAnneeNMoins1 du salarieAideADomicile
-     * @parma moisDebutContrat du salarieAideADomicile
+     * @param moisDebutContrat du salarieAideADomicile
      * @param premierJourDeConge demandé
      * @param dernierJourDeConge demandé
      * @return arrondi à l'entier le plus proche
      */
     public long calculeLimiteEntrepriseCongesPermis(LocalDate moisEnCours, double congesPayesAcquisAnneeNMoins1,
-                                                      LocalDate moisDebutContrat,
-                                                      LocalDate premierJourDeConge, LocalDate dernierJourDeConge) {
+                                                    LocalDate moisDebutContrat,
+                                                    LocalDate premierJourDeConge, LocalDate dernierJourDeConge) {
         // proportion selon l'avancement dans l'année, pondérée avec poids plus gros sur juillet et août (20 vs 8) :
         double proportionPondereeDuConge = Math.max(Entreprise.proportionPondereeDuMois(premierJourDeConge),
                 Entreprise.proportionPondereeDuMois(dernierJourDeConge));
@@ -108,15 +111,17 @@ public class SalarieAideADomicileService {
         LinkedHashSet<LocalDate> joursDecomptes = salarieAideADomicile
                 .calculeJoursDeCongeDecomptesPourPlage(jourDebut, jourFin);
 
-        if (joursDecomptes.size() == 0) {
+        if (joursDecomptes.isEmpty()) {
             throw new SalarieException("Pas besoin de congés !");
         }
 
-        // on vérifie que le congé demandé est dans les mois restants de l'année de congés en cours du salarié :
-        if (joursDecomptes.stream().findFirst().get()
-                .isBefore(salarieAideADomicile.getMoisEnCours())) {
+        // Correction Sonar : vérification Optional avant accès
+        if (!joursDecomptes.isEmpty() && joursDecomptes.stream().findFirst()
+                .filter(d -> d.isBefore(salarieAideADomicile.getMoisEnCours()))
+                .isPresent()) {
             throw new SalarieException("Pas possible de prendre de congé avant le mois en cours !");
         }
+
         LinkedHashSet<LocalDate> congesPayesPrisDecomptesAnneeN = new LinkedHashSet<>(joursDecomptes.stream()
                 .filter(d -> !d.isAfter(LocalDate.of(Entreprise.getPremierJourAnneeDeConges(
                         salarieAideADomicile.getMoisEnCours()).getYear() + 1, 5, 31)))
