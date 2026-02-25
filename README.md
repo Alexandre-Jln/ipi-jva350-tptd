@@ -189,4 +189,19 @@ fichier ne dépasse pas 1 MO.
 - BONUS : Créez une petite documentation statique en utilisant MkDocs.
 - Rédigez **ci-dessous** une courte analyse du rapport produit par Sonar (métriques, évolution, état général...) :
 
-Le rapport Sonar final indique...
+Le rapport Sonar final indique que le projet (avec 667 lignes de code) passe le Quality Gate avec succès (statut "Passed - All conditions passed").
+Métriques du nouveau code (14 derniers jours) :
+
+Coverage : 88.64% (requis ≥ 80%) — sur 20 nouvelles lignes à couvrir, ce qui démontre une bonne couverture des tests unitaires et paramétrés ajoutés
+Duplications : 0.0% (requis ≤ 3%) sur 626 nouvelles lignes, aucun code dupliqué, signe d'un code bien factorisé
+19 New Issues restantes (principalement des code smells de maintenabilité, aucun bug bloquant)
+0 Accepted Issues et 0 Security Hotspots
+
+Métriques globales (Overall Code) :
+
+Coverage global : 72.2%, en hausse de +17.0% sur les 30 derniers jours, ce qui montre une nette progression grâce aux tests ajoutés
+Duplications globales : 3.5%, en baisse de -2.8% sur les 30 derniers jours
+39 Open Issues au total sur l'ensemble du projet
+
+Évolution et état général :
+Le projet a connu une amélioration significative de sa qualité. La couverture de code a progressé de +17% grâce à l'ajout de tests unitaires simples, paramétrés et mockés. Les bugs critiques (Blocker et Reliability) ont tous été corrigés, notamment la correction de l'injection par constructeur et la vérification des Optional. Les 39 issues restantes sont principalement des code smells de sévérité Low/Medium hérités du code existant, sans impact sur la fiabilité ni la sécurité du projet.
